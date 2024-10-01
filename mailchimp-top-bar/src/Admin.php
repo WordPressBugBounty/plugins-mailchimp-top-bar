@@ -62,15 +62,14 @@ class Admin {
 	public function add_menu_item( array $items ) {
 
 			$item = array(
-				'title' => __( 'Mailchimp Top Bar', 'mailchimp-top-bar' ),
-				'text' => __( 'Top Bar', 'mailchimp-top-bar' ),
+				'title' => strip_tags(__( 'Mailchimp Top Bar', 'mailchimp-top-bar' )),
+				'text' => strip_tags(__( 'Top Bar', 'mailchimp-top-bar' )),
 				'slug' => 'top-bar',
-				'callback' => array( $this, 'show_settings_page' )
+				'callback' => array($this, 'show_settings_page')
 			);
 
 			// insert item before the last menu item
 			array_splice( $items, count( $items ) - 1, 0, array( $item ) );
-
 			return $items;
 	}
 
@@ -81,7 +80,9 @@ class Admin {
 	 * @return array
 	 */
 	public function add_plugin_settings_link( array $links ) {
-		$settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=mailchimp-for-wp-top-bar' ), __( 'Settings', 'mailchimp-for-wp' ) );
+		$link_href = admin_url( 'admin.php?page=mailchimp-for-wp-top-bar' );
+		$link_title = strip_tags(__( 'Settings', 'mailchimp-for-wp' ));
+		$settings_link = "<a href=\"{$link_href}\">{$link_title}</a>";
 		array_unshift( $links, $settings_link );
 		return $links;
 	}
@@ -98,7 +99,7 @@ class Admin {
 			return $links;
 		}
 
-		$links[] = sprintf( __( 'An add-on for %s', 'mailchimp-top-bar' ), '<a href="https://www.mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-top-bar&utm_campaign=plugins-page">Mailchimp for WordPress</a>' );
+		$links[] = \sprintf(strip_tags(__( 'An add-on for %s', 'mailchimp-top-bar' )), '<a href="https://www.mc4wp.com/">Mailchimp for WordPress</a>');
 		return $links;
 	}
 
@@ -153,30 +154,53 @@ class Admin {
 	 */
 	public function sanitize_settings( array $dirty ) {
 
+		$unfiltered_html = current_user_can('unfiltered_html');
 		$clean = $dirty;
+		$safe_attributes = array(
+			'class' => array(),
+			'id' => array(),
+			'title' => array(),
+			'tabindex' => array(),
+		);
+		$unsafe_attributes = array_merge($safe_attributes, array('href' => array()));
+		$allowed_html = array(
+			'strong' => $safe_attributes,
+			'b' => $safe_attributes,
+			'em' => $safe_attributes,
+			'i' => $safe_attributes,
+			'u' => $safe_attributes,
+			// only allow href attribute on <a> elements if user has unfiltered_html capability
+			'a' => $unfiltered_html ? $unsafe_attributes : $safe_attributes,
+			'span' => $safe_attributes,
+		);
 
-		 // Dynamic sanitization
 		foreach( $clean as $key => $value ) {
-
 			// make sure colors start with `#`
-			if( substr( $key, 0, 6 ) === 'color_' ) {
+			if (strpos($key, 'color_') === 0) {
+				$value = strip_tags($value);
 				if( '' !== $value && $value[0] !== '#' ) {
 					$clean[$key] = '#' . $value;
 				}
 			}
+
+			// only allow certain HTML elements inside all text settings
+			if (strpos($key, 'text_') === 0) {
+				$clean[$key] = wp_kses(strip_tags($value, '<strong><b><em><i><u><a><span>'), $allowed_html );
+			}
 		}
 
-		// only allow simple HTML in the bar text
-		$clean['text_bar'] = strip_tags( $dirty['text_bar'], '<strong><b><em><i><u><a><span>' );
-
 		// make sure size is either `small`, `medium` or `big`
-		if( ! in_array( $dirty['size'], array( 'small', 'medium', 'big' ) ) ) {
+		if( ! in_array( $dirty['size'], array('small', 'medium', 'big') ) ) {
 			$clean['size'] = 'medium';
 		}
 
-		if( ! in_array( $dirty['position'], array( 'top', 'bottom' ) ) ) {
+		if( ! in_array( $dirty['position'], array('top', 'bottom') ) ) {
 			$clean['position'] = 'top';
 		}
+
+		// button & email placeholders can have no HTML at all
+		$clean['text_button'] = strip_tags($dirty['button_text']);
+		$clean['text_email_placeholder'] = strip_tags($dirty['text_email_placeholder']);
 
 		return $clean;
 	}
