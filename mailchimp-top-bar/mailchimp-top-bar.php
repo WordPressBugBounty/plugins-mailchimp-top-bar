@@ -3,7 +3,7 @@
 Plugin Name: MC4WP: Mailchimp Top Bar
 Plugin URI: https://www.mc4wp.com/
 Description: Adds a Mailchimp opt-in bar to the top of your site.
-Version: 1.7.1
+Version: 1.7.2
 Author: ibericode
 Author URI: https://ibericode.com/
 Text Domain: mailchimp-top-bar
@@ -38,29 +38,14 @@ add_action('plugins_loaded', function () {
 
     // check for MailChimp for WordPress (version 3.0 or higher)
     if (!defined('MC4WP_VERSION') || version_compare(MC4WP_VERSION, '3.0', '<')) {
-        // Show notice to user
-        add_action('admin_notices', function () {
-
-            // only show to user with caps
-            if (! current_user_can('install_plugins')) {
-                return;
-            }
-
-            add_thickbox();
-            $url = network_admin_url('plugin-install.php?tab=plugin-information&plugin=mailchimp-for-wp&TB_iframe=true&width=600&height=550');
-            ?>
-            <div class="notice notice-warning is-dismissible">
-                <p><?php printf(__('Please install or activate <a href="%s" class="thickbox">%s</a> in order to use %s.', 'mailchimp-top-bar'), $url, '<strong>MailChimp for WordPress</strong>', 'MailChimp Top Bar'); ?></p>
-            </div>
-            <?php
-        });
+        require __DIR__ . '/src/admin-notice-install-deps.php';
         return;
     }
 
 
     define('MAILCHIMP_TOP_BAR_FILE', __FILE__);
     define('MAILCHIMP_TOP_BAR_DIR', __DIR__);
-    define('MAILCHIMP_TOP_BAR_VERSION', '1.7.1');
+    define('MAILCHIMP_TOP_BAR_VERSION', '1.7.2');
 
     require __DIR__ . '/src/functions.php';
 
