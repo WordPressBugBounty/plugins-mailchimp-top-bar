@@ -1,11 +1,12 @@
 <?php
+
 /*
 Plugin Name: MC4WP: Mailchimp Top Bar
 Plugin URI: https://www.mc4wp.com/
 Description: Adds a Mailchimp opt-in bar to the top of your site.
-Version: 1.7.2
+Version: 1.7.3
 Author: ibericode
-Author URI: https://ibericode.com/
+Author URI: https://www.ibericode.com/
 Text Domain: mailchimp-top-bar
 Domain Path: /languages
 License: GPL-3.0-or-later
@@ -28,6 +29,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+
 defined('ABSPATH') or exit;
 
 add_action('plugins_loaded', function () {
@@ -45,7 +47,7 @@ add_action('plugins_loaded', function () {
 
     define('MAILCHIMP_TOP_BAR_FILE', __FILE__);
     define('MAILCHIMP_TOP_BAR_DIR', __DIR__);
-    define('MAILCHIMP_TOP_BAR_VERSION', '1.7.2');
+    define('MAILCHIMP_TOP_BAR_VERSION', '1.7.3');
 
     require __DIR__ . '/src/functions.php';
 
@@ -56,6 +58,6 @@ add_action('plugins_loaded', function () {
     } else {
         require __DIR__ . '/src/Bar.php';
         $bar = new MailChimp\TopBar\Bar();
-        $bar->add_hooks();
+        add_action('wp', [$bar, 'init']);
     }
 }, 30);

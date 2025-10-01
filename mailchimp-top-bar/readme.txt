@@ -4,7 +4,7 @@ Donate link: https://www.mc4wp.com/
 Tags: mailchimp, form, top bar, call to action, subscribe
 Requires at least: 4.9
 Tested up to: 6.8
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.3
@@ -38,7 +38,7 @@ Using this bar, people can subscribe to a Mailchimp audience of your choice.
 
 = About the author =
 
-Mailchimp Top Bar is a plugin by [ibericode](https:/www.ibericode.com/), a small Dutch company that you may known from other plugins like [Mailchimp for WordPress](https://www.mc4wp.com/), [Boxzilla Pop-ups](https://www.boxzillaplugin.com) and [Koko Analytics](https://www.kokoanalytics.com/).
+Mailchimp Top Bar is a plugin by [ibericode](https:/www.ibericode.com/), a company from The Netherlands that you may know from other plugins like [Mailchimp for WordPress](https://www.mc4wp.com/), [Boxzilla Pop-ups](https://www.boxzillaplugin.com) and [Koko Analytics](https://www.kokoanalytics.com/).
 
 
 == Installation ==
@@ -125,9 +125,10 @@ Please open a topic on the [WordPress.org plugin support forums](https://wordpre
 == Changelog ==
 
 
-### 1.7.2 - Aug 18, 2025
+### 1.7.3 - Oct 1, 2025
 
 - Minor performance or memory usage related improvements.
+- Compatibility check with latest WordPress version.
 
 
 ### 1.7.1 - Jul 2, 2025
