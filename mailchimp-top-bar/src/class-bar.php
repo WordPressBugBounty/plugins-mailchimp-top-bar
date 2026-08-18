@@ -87,9 +87,8 @@ class Bar
 
         /**
          * @deprecated 1.1
-         * @use `mctb_show_bar`
          */
-        $show_bar = apply_filters("mctp_show_bar", $show_bar);
+        $show_bar = apply_filters_deprecated("mctp_show_bar", [$show_bar], '1.1', 'mctb_show_bar');
 
         /**
          * @filter `mctb_show_bar`
@@ -125,7 +124,6 @@ class Bar
             ];
 
             wp_send_json($data);
-            exit();
         }
 
         if ($this->success) {
@@ -133,7 +131,7 @@ class Bar
             $redirect_url = $options["redirect"];
             if (!empty($redirect_url)) {
                 wp_redirect($redirect_url);
-                exit();
+                exit;
             }
         }
     }
@@ -144,7 +142,7 @@ class Bar
         $this->submitted = true;
         $log             = $this->get_log();
 
-        /** @var MC4WP_MailChimp_Subscriber $subscriber_data */
+        /** @var ?MC4WP_MailChimp_Subscriber $subscriber */
         $subscriber = null;
         $result     = false;
 
@@ -216,7 +214,7 @@ class Bar
                 : "subscribed";
             $subscriber->ip_signup  = mc4wp_get_request_ip_address();
 
-            /** @ignore (documented elsewhere) */
+            /** @ignore */
             $subscriber = apply_filters("mc4wp_subscriber_data", $subscriber);
 
             /**
@@ -266,7 +264,7 @@ class Bar
         }
 
         // An API error occured... Oh noes!
-        if ($mailchimp->get_error_code() === 214) {
+        if ((int) $mailchimp->get_error_code() === 214) {
             $this->error_type = "already_subscribed";
 
             if ($log) {
@@ -457,7 +455,7 @@ class Bar
                     <?php do_action("mctb_before_email_field"); ?>
                     <input type="email" name="email"
                         placeholder="<?php echo esc_attr($options["text_email_placeholder"]); ?>"
-                            class="mctb-email" required id="mailchimp-top-bar__email">
+                            class="mctb-email" required id="mailchimp-top-bar__email" autocomplete="email">
                     <input type="text" name="email_confirm" placeholder="Confirm your email" value="" autocomplete="off"
                             tabindex="-1" class="mctb-email-confirm">
                     <?php do_action("mctb_before_submit_button"); ?>
